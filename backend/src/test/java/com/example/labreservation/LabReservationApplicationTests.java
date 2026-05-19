@@ -141,3 +141,16 @@ class LabReservationApplicationTests {
         assertThat(equipment.getStatus()).isEqualTo(EquipmentStatus.MAINTENANCE);
     }
 }
+@Test
+void cancelingReservationAllowsSameTimeSlotToBeReservedAgain() {
+    var start = LocalDateTime.of(2026, 5, 21, 9, 0);
+    Reservation reservation = reservationService.create(2L,
+            new ReservationCreateRequest(2L, start, start.plusHours(2)));
+
+    reservationService.cancel(reservation.getId(), 2L);
+
+    Reservation next = reservationService.create(3L,
+            new ReservationCreateRequest(2L, start, start.plusHours(2)));
+
+    assertThat(next.getId()).isNotNull();
+}
